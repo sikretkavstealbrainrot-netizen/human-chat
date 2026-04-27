@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 HumanChat — Чат с реальными людьми</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { font-size: 56px; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        input:focus { outline: none; border-color: #667eea; }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover { transform: scale(1.02); }
+        .divider {
+            margin: 30px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+        .error { color: #e53e3e; margin-top: 10px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💬</h1>
+        <h1>HumanChat</h1>
+        <p class="subtitle">Общайся с реальными людьми в реальном времени</p>
+
+        <input type="text" id="username" placeholder="Твоё имя" maxlength="20">
+        
+        <button onclick="createRoom()">✨ Создать новую комнату</button>
+        
+        <div class="divider">или</div>
+        
+        <input type="text" id="roomIdInput" placeholder="Код комнаты (например: abc123)">
+        <button onclick="joinRoom()">🔗 Войти в комнату</button>
+        
+        <div id="errorMsg" class="error"></div>
+    </div>
+
+    <!-- Firebase SDK (Compat версия) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <script>
+        // ТВОЙ КОНФИГ FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIvRdZrTgzVSEyU7s8boXITTOWwjg_6mU",
+            authDomain: "human-chat-2910b.firebaseapp.com",
+            databaseURL: "https://human-chat-2910b-default-rtdb.firebaseio.com",
+            projectId: "human-chat-2910b",
+            storageBucket: "human-chat-2910b.firebasestorage.app",
+            messagingSenderId: "622993816871",
+            appId: "1:622993816871:web:3c77c3f4aaea5ebf533d02",
+            measurementId: "G-XSLJFYGBL2"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function generateRoomId() {
+            return Math.random().toString(36).substring(2, 10);
+        }
+
+        function createRoom() {
+            const username = document.getElementById('username').value.trim();
+            if (!username) {
+                showError('Введи имя!');
+                return;
+            }
+            const roomId = generateRoomId();
+            localStorage.setItem('chat_username', username);
+            window.location.href = `chat.html?room=${roomId}`;
+        }
+
+        function joinRoom() {
+            const username = document.getElementById('username').value.trim();
+            const roomId = document.getElementById('roomIdInput').value.trim();
+            if (!username) {
+                showError('Введи имя!');
+                return;
+            }
+            if (!roomId) {
+                showError('Введи код комнаты!');
+                return;
+            }
+            localStorage.setItem('chat_username', username);
+            window.location.href = `chat.html?room=${roomId}`;
+        }
+
+        function showError(msg) {
+            const err = document.getElementById('errorMsg');
+            err.textContent = msg;
+            setTimeout(() => err.textContent = '', 3000);
+        }
+    </script>
+</body>
+</html>
